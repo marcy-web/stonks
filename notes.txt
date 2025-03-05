@@ -1,0 +1,17 @@
+numpy vs standard arrays:
+    - numpy is 10-100 times faster
+    - more memory efficient
+    - can perform operations on arrays without loops
+
+bad variable names because...? math background maybe?
+
+starting the game:
+
+# Create a virtual environment
+python -m venv ~/venvs/ascii
+
+# Activate it
+source ~/venvs/ascii/bin/activate
+
+# Install the package
+pip install asciichartpy
