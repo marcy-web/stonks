@@ -4,29 +4,40 @@ import matplotlib.pyplot as matplotlib
 numpy.set_printoptions(suppress=True, precision=1, floatmode='fixed')
 matplotlib.style.use('rose-pine-moon.mplstyle')
 
-test_array = numpy.array([1, 4, 6, 9, 5])
-
-def calculate_quadratic_variation(brownian_path):
-    price_change = numpy.diff(brownian_path, axis = 0, prepend = 0.0)
-    squared_change = numpy.power(price_change, 2)
-    cumulative_square_change = numpy.cumsum(squared_change, axis = 0)
-    return cumulative_square_change
 
 def main():
     # variable declarations
-    time_steps = 10000
-    number_of_paths = 1
-    time_horizon = 1.0
+    drift_coefficient = 0.1
+    number_of_steps = 1000
+    time_in_years = 1
+    number_of_paths = 100
+    initial_stock_price = 100
+    volatility = 0.3
 
-    # variable declarations but with calculations
-    time_points = numpy.linspace(0.0, time_horizon, time_steps)
-    time_differential = time_points[1] - time_points[0]
-    brownian_differential = numpy.sqrt(time_differential) * numpy.random.normal(size = (time_steps - 1, number_of_paths))
-    brownian_start = numpy.zeros(shape = (1, number_of_paths))
-    brownian_paths = numpy.concatenate((brownian_start, numpy.cumsum(brownian_differential, axis = 0)), axis = 0)
+    #simulating geometric brownian motion paths
+    time_steps = time_in_years / number_of_steps
+    deterministic_drift = (drift_coefficient - volatility ** 2 / 2) * time_steps
+    random_shocks = numpy.random.normal(0, numpy.sqrt(time_steps), size = (number_of_paths, number_of_steps))
+    random_shocks = random_shocks.T
+    stochastic_component = volatility * random_shocks
+    drift_factor_per_step = numpy.exp(deterministic_drift + stochastic_component)
+
+    drift_factor_per_step = numpy.vstack([numpy.ones(number_of_paths), drift_factor_per_step])
+    drift_factor_per_step = initial_stock_price * drift_factor_per_step.cumprod(axis = 0)
+    
+    #consider time interval in years
+    time_interval = numpy.linspace(0, time_in_years, number_of_steps + 1)
+    time_point_matrix = numpy.full(shape = (number_of_paths, number_of_steps + 1), fill_value = time_interval).T
 
     #data visualisation
-    matplotlib.plot(time_points, brownian_paths)
+    matplotlib.figure(figsize=(28.8, 21.6), dpi=100)
+    matplotlib.rcParams.update({'font.size': 22})
+    matplotlib.grid(True)
+    matplotlib.plot(time_point_matrix, drift_factor_per_step)
+    matplotlib.title("Realisations of Geometric Brownian Motion")
+    matplotlib.xlabel("Years (t)")
+    matplotlib.ylabel("Stock Price ($)")
+    matplotlib.savefig("geometric_brownian_motion.png")
     matplotlib.show()
 
 main()

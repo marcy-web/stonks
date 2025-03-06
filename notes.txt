@@ -5,6 +5,9 @@ numpy vs standard arrays:
 
 bad variable names because...? math background maybe?
 
+volatility ** 2 / 2 what that bit basically does is make sure our predictions are correct long term, even though there's lots of noise in the short term
+deterministic = predictable, stochastic = random
+
 starting the game:
 
 # Create a virtual environment
@@ -15,3 +18,10 @@ source ~/venvs/ascii/bin/activate
 
 # Install the package
 pip install asciichartpy
+
+
+to-do:
+- add biases
+- pull data from y finance
+
+git commit -m "redid the main.py graph to use gbm"
